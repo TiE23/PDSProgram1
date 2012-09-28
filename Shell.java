@@ -8,5 +8,6 @@ public class Shell extends Thread {
 		// Wait. I staged but now I just added this! What do?
 		// Now back to SmartGit!
 		// Now through SmartGit on my Netbook!
+		// From desktop!
 	}
 }
