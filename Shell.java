@@ -14,5 +14,8 @@ public class Shell extends Thread {
 		// Having fun on desktop branch!
 		// This is fun! A local branch!
 		// Still master!
+		// Adventure?
+		// Adventure, part II
+		// The adventure ends! Yes, truely ends... Or does it?
 	}
 }
