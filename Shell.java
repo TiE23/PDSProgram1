@@ -17,5 +17,6 @@ public class Shell extends Thread {
 		// Adventure?
 		// Adventure, part II
 		// The adventure ends! Yes, truely ends... Or does it?
+		// New version! Combining Adventure and "Still master!"
 	}
 }
