@@ -12,5 +12,6 @@ public class Shell extends Thread {
 		// Back from netbook! This is a branch!
 		// remerge?
 		// Having fun on desktop branch!
+		// This is fun! A local branch!
 	}
 }
