@@ -10,5 +10,6 @@ public class Shell extends Thread {
 		// Now through SmartGit on my Netbook!
 		// From desktop!
 		// Back from netbook! This is a branch!
+		// remerge?
 	}
 }
