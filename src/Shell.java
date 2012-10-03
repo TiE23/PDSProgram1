@@ -1,4 +1,5 @@
-// This is still empty! :)
+// hello from Eclipse!
+/*
 import java.util.StringTokenizer;
 // Oh wait, there's something! Wait!
 
@@ -20,3 +21,4 @@ public class Shell extends Thread {
 		// New version! Combining Adventure and "Still master!"
 	}
 }
+*/
