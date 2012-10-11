@@ -1,4 +1,5 @@
 // Kyle Geib - CSS434 - Dr Fukuda - Program 01 - October 16th, 2012
+// ChatClient.java
 
 import java.net.*;
 import java.io.*;
@@ -70,7 +71,7 @@ public class ChatClient {
     * @param args Receives a client user name, a server ip name, and its port
     *             in args[0], args[1], and args[2] respectively.
     */
-	public static void main( String args[]) {
+	public static void main(String args[]) {
 		// Check # of args.
 		if (args.length != 3) {
 			System.err.println("Syntax: java ChatClient <your name> " +
