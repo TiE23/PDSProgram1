@@ -1,8 +1,11 @@
 // Kyle Geib - CSS434 - Dr Fukuda - Program 01 - October 16th, 2012
 // ChatServer.java
 
+package chat_program;
+
 import java.net.*;
 import java.io.*;
+import java.util.Vector;
 
 public class ChatServer {
 	//private Socket socket;			// a socket connection to a chat server
@@ -20,14 +23,31 @@ public class ChatServer {
      * @param port   a server port
      */
 	public ChatServer(int port) {
+		// Create a vector of client-socket connections
+		Vector<Connection> connectionVector = new Vector<Connection>();
+		
 		try {
 		// Establish a server socket with given port
 		ServerSocket svr = new ServerSocket(port);
-		while(true) {
+		
+		// Establish a 500ms time-out period
+		svr.setSoTimeout(500);
+		
+		while (true) {	// Main loop
+			try { // Try accepting a new connection
+			Socket socket = svr.accept();
 			
-			
+			// Check to see if returned socket is something new
+			if (socket != null && !connectionVector.contains(socket)) {
+				Connection clientConn = new Connection(socket);
+				connectionVector.add(clientConn);	// Add socket to list
+				
+				
+			}
+			} catch (SocketTimeoutException e) {}
+
 		}	
-		}
+		} catch (Exception e) { e.printStackTrace(); }
 	}
 	
 	/**     
