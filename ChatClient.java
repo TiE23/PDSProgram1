@@ -39,6 +39,7 @@ public class ChatClient {
 			// Send the client name to the server
 			out.writeUTF(name);
 			while (true) {
+				
 				// If the user types something from the keyboard, read it from
 				// the standard input and simply forward it to the server
 				if (stdin.ready()) {
@@ -81,10 +82,5 @@ public class ChatClient {
 		
 		// Instantiate the main body of ChatClient application.
 		new ChatClient(args[0], args[1], port);
-	}
-	
-	
-	
-	
-	
+	}	
 }
