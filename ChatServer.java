@@ -2,7 +2,6 @@
 // ChatServer.java
 
 import java.net.*;
-import java.io.*;
 import java.util.Vector;
 
 public class ChatServer {
@@ -96,10 +95,10 @@ public class ChatServer {
 	}
 	
 	/** main ------------------------------------------------------------------
-	* Usage: java ChatServer <port>
-    *
-    * @param args Receives a port in args[0].
-    */
+	 * Usage: java ChatServer <port>
+     *
+     * @param args Receives a port in args[0].
+     */
 	public static void main(String args[]) {
 		// Check # of args.
 		if (args.length != 1) {

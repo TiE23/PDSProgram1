@@ -5,16 +5,14 @@ import java.net.*;
 import java.io.*;
 
 public class Connection {
-	public String name;
-	public Boolean alive = false;
+	public String name;				// The user's name
+	public Boolean alive = false;	// "Is this client still connected?"
 	
 	private Socket clientSocket;	// Socket connection server has to client
 	private InputStream rawIn;		// an input stream from the server
 	private DataInputStream in;		// a filtered input stream from the server
 	private DataOutputStream out;	// a filtered output stream to the server
-	
-	
-	
+
 	// Constructor -----------------------------------------------------------
 	/* Takes in the client socket and establishes the user name and the other
 	 * various streams.
