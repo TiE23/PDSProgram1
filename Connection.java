@@ -31,12 +31,16 @@ public class Connection {
 		// Receive the name of the user with the 
 		name = in.readUTF();
 		
+		// Successful connection in reading the new user's name.
 		alive = true;
 		} catch (Exception e) { e.printStackTrace(); }
-		
-		
 	}
 	
+	/** readMessage -----------------------------------------------------------
+	 * Attempts receiving a new message from this Client Socket. If an error
+	 * occurs
+	 * @return		
+	 */
 	public String readMessage() {
 		String message = null;
 		
@@ -48,27 +52,36 @@ public class Connection {
 		return message;
 	}
 	
+	/** writeMessage ----------------------------------------------------------
+	 * Attempts to send a message to this client
+	 * @param message	String of the message we want to send to the client.
+	 * @return			Returns whether or not it was successful.
+	 */
 	public boolean writeMessage(String message) {
 		
 		try {
 			out.writeUTF(message);
 		} catch (IOException e) {
 			alive = false;	// The connection may be dead
-			System.err.println("Problem experienced writing to " + name +".");
 			return false;
 		}
-		
+		alive = true;
 		return true;
 	}
 
-	// equals ----------------------------------------------------------------
-	// Small function that allows Vector.contains() to check for a match
+	/** equals ----------------------------------------------------------------
+	 * Small function that allows Vector.contains() to check for a match
+	 * @param match		The socket to be compared
+	 * @return			The result of using equals() on the Socket object
+	 */
 	public boolean equals(Socket match) {
 		return clientSocket.equals(match);
 	}
 	
-	// close -----------------------------------------------------------------
-	// Small method that closes the client socket.
+	/** close -----------------------------------------------------------------
+	 * Small method that closes the client socket.
+	 * @return			The success of the attempt at closing the Socket.
+	 */
 	public boolean close() {
 		try {
 			clientSocket.close();
@@ -77,7 +90,6 @@ public class Connection {
 			return false;
 		}
 		// Able to close without issue.
-		alive = false;
 		return true;
 	}
 }

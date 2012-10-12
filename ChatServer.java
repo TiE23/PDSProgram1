@@ -6,8 +6,9 @@ import java.io.*;
 import java.util.Vector;
 
 public class ChatServer {
+	private Vector<Connection> connectionVector;
 	
-	/**     
+	/** ChatServer Constructor ------------------------------------------------
 	 * Creates a socket and creates a list of client connections that is
 	 * empty at the beginning. Thereafter, the server goes into a loop
 	 * where it repeats operations.
@@ -16,7 +17,7 @@ public class ChatServer {
      */
 	public ChatServer(int port) {
 		// Create a vector of client-socket connections
-		Vector<Connection> connectionVector = new Vector<Connection>();
+		connectionVector = new Vector<Connection>();
 		
 		try {
 		// Establish a server socket with given port
@@ -35,20 +36,20 @@ public class ChatServer {
 				Connection clientConn = new Connection(socket);
 				
 				// Read the new user's name
-				System.out.println("User " + clientConn.name + " joined!");
+				sendToAll("User " + clientConn.name + " joined!", -1);
 				
 				// Add connection to list
 				connectionVector.add(clientConn);
 				
 			}
-			} catch (SocketTimeoutException e) { System.out.print("."); }
+			} catch (SocketTimeoutException e) { }
 
 			// Go through the connection list
 			for (int x = 0; x < connectionVector.size(); x++) {
 				Connection temp = connectionVector.get(x);
 				
 				if (!temp.alive) {	// Clear out a dropped client
-					System.out.println("User " + temp.name + " has dropped!");
+					sendToAll("User " + temp.name + " has left!", -1);
 					temp.close();
 					connectionVector.remove(x);	// Remove this dropped client
 					break;
@@ -60,23 +61,41 @@ public class ChatServer {
 				// If the message has content, send it to the other clients
 				if (message != null && !message.isEmpty()) {
 					message = temp.name + ": " + message;
-					
-					// Cycle through the clients again
-					for (int y = 0; y < connectionVector.size(); y++) {
-						
-						// Reach those who aren't the sending client
-						if (y != x) {
-							temp = connectionVector.get(y);
-							temp.writeMessage(message);
-						}
-					}
+					sendToAll(message, x);
 				}
 			}
 		}	// End of Main loop
 		} catch (Exception e) { e.printStackTrace(); }
 	}
 	
-	/**     
+	/** sendToAll -------------------------------------------------------------
+	 * Broadcasts messages to all clients. If the server wants to broadcast
+	 * a general message to all users, sourceClient should be -1.
+	 *  
+	 * @param message		The desired String to be sent
+	 * @param sourceClient	The Vector number of the sending client
+	 */
+	private void sendToAll(String message, int sourceClient) {
+		Connection temp;
+		
+		// Print into server console
+		System.out.println(message);
+		
+		if (sourceClient == -1)
+			message = "SERVER: " + message;
+		
+		// Cycle through the clients again
+		for (int y = 0; y < connectionVector.size(); y++) {
+			
+			// Reach those who aren't the sending client
+			if (y != sourceClient) {
+				temp = connectionVector.get(y);
+				temp.writeMessage(message);
+			}
+		}
+	}
+	
+	/** main ------------------------------------------------------------------
 	* Usage: java ChatServer <port>
     *
     * @param args Receives a port in args[0].
