@@ -6,13 +6,14 @@ import java.io.*;
 
 public class Connection {
 	public String name;
+	public Boolean alive = false;
 	
-	private Socket clientSocket;
+	private Socket clientSocket;	// Socket connection server has to client
 	private InputStream rawIn;		// an input stream from the server
 	private DataInputStream in;		// a filtered input stream from the server
 	private DataOutputStream out;	// a filtered output stream to the server
 	
-	public Boolean alive = false;
+	
 	
 	// Constructor -----------------------------------------------------------
 	/* Takes in the client socket and establishes the user name and the other
@@ -33,17 +34,31 @@ public class Connection {
 		alive = true;
 		} catch (Exception e) { e.printStackTrace(); }
 		
-		System.out.println("User " + name + " joined!");
+		
 	}
 	
 	public String readMessage() {
+		String message = null;
 		
-		return "";
+		try { 
+			if (rawIn.available() > 0)
+				message = in.readUTF(); 
+		} catch (IOException e) { alive = false; }
+		
+		return message;
 	}
 	
 	public boolean writeMessage(String message) {
 		
-		return false;
+		try {
+			out.writeUTF(message);
+		} catch (IOException e) {
+			alive = false;	// The connection may be dead
+			System.err.println("Problem experienced writing to " + name +".");
+			return false;
+		}
+		
+		return true;
 	}
 
 	// equals ----------------------------------------------------------------
