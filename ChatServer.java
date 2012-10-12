@@ -6,12 +6,6 @@ import java.io.*;
 import java.util.Vector;
 
 public class ChatServer {
-	//private Socket socket;			// a socket connection to a chat server
-	//private InputStream rawIn;		// an input stream from the server
-	private DataInputStream in;		// a filtered input stream from the server
-	private DataOutputStream out;	// a filtered output stream to the server
-	//private BufferedReader stdin;	// the standard input
-	
 	
 	/**     
 	 * Creates a socket and creates a list of client connections that is
@@ -37,14 +31,48 @@ public class ChatServer {
 			
 			// Check to see if returned socket is something new
 			if (socket != null && !connectionVector.contains(socket)) {
-				Connection clientConn = new Connection(socket);
-				connectionVector.add(clientConn);	// Add socket to list
 				
+				Connection clientConn = new Connection(socket);
+				
+				// Read the new user's name
+				System.out.println("User " + clientConn.name + " joined!");
+				
+				// Add connection to list
+				connectionVector.add(clientConn);
 				
 			}
-			} catch (SocketTimeoutException e) {}
+			} catch (SocketTimeoutException e) { System.out.print("."); }
 
-		}	
+			// Go through the connection list
+			for (int x = 0; x < connectionVector.size(); x++) {
+				Connection temp = connectionVector.get(x);
+				
+				if (!temp.alive) {	// Clear out a dropped client
+					System.out.println("User " + temp.name + " has dropped!");
+					temp.close();
+					connectionVector.remove(x);	// Remove this dropped client
+					break;
+				}
+				
+				// Try reading a new message from this client
+				String message = temp.readMessage();
+				
+				// If the message has content, send it to the other clients
+				if (message != null && !message.isEmpty()) {
+					message = temp.name + ": " + message;
+					
+					// Cycle through the clients again
+					for (int y = 0; y < connectionVector.size(); y++) {
+						
+						// Reach those who aren't the sending client
+						if (y != x) {
+							temp = connectionVector.get(y);
+							temp.writeMessage(message);
+						}
+					}
+				}
+			}
+		}	// End of Main loop
 		} catch (Exception e) { e.printStackTrace(); }
 	}
 	
