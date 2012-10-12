@@ -1,8 +1,6 @@
 // Kyle Geib - CSS434 - Dr Fukuda - Program 01 - October 16th, 2012
 // ChatServer.java
 
-package chat_program;
-
 import java.net.*;
 import java.io.*;
 import java.util.Vector;
