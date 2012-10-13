@@ -105,12 +105,12 @@ public class Chat {
 		// broadcast a message to each of the chat members.
 		for ( int i = 0; i < hosts.length; i++ )
 		    if ( i != rank ) {
+		    	
+		    Message sending = new Message(message, vector);
 			// of course I should not send a message to myself
 	    	System.out.println("----OUTGOING to   " + i + " " + printArray(vector));
-	    	outputs[i].writeObject(vector);	// Send message vector to others
+	    	outputs[i].writeObject(sending);	// Send message vector to others
 	    	outputs[i].flush( ); // make sure the message was sent
-			outputs[i].writeObject( message );
-			outputs[i].flush( ); // make sure the message was sent
 		    }
 	    }
 
@@ -129,21 +129,21 @@ public class Chat {
 		    // to the monitor
 		    try {
 	    	
+		    Message receiving = (Message) inputs[i].readObject();
 		    // Receive the incoming message vector
-	    	int[] rec_vec = null;
-	    	rec_vec = (int[]) inputs[i].readObject();
-	    	System.out.println("----INCOMING from " + i + " " + printArray(rec_vec));
+	    	System.out.println("----INCOMING from " + i + " " + 
+	    			printArray(receiving.vector));
 	    	
 	    	
 	    	
 	    	
 		    // Secondly we get the message
-			String message = ( String )inputs[i].readObject( );
+			String message = receiving.message;
 			
 			// Check if the new message is acceptable to print immediately
-			if ( !compareVectors(rec_vec, i) ) {
+			if ( !compareVectors(receiving.vector, i) ) {
 				// If not, add to queue
-				queue_vec.add(rec_vec);
+				queue_vec.add(receiving.vector);
 				queue_msg.add(message);
 				queue_src.add(new Integer(i));
 				change = true;
@@ -152,7 +152,7 @@ public class Chat {
 				System.out.println( hosts[i] + ": " + message );
 				
 				// Update the local vector
-				vector = Arrays.copyOf(rec_vec, vector.length);
+				vector = Arrays.copyOf(receiving.vector, vector.length);
 			}
 		    } catch ( ClassNotFoundException e ) {}
 		}
