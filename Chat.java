@@ -3,8 +3,7 @@
 
 import java.net.*;  // ServerSocket, Socket
 import java.io.*;   // InputStream, ObjectInputStream, ObjectOutputStream
-import java.util.Arrays;
-import java.util.Vector;
+import java.util.*;
 
 public class Chat {
     // Each element i of the following arrays represent a chat member[i]
@@ -138,7 +137,7 @@ public class Chat {
 	    	
 	    	
 		    // Secondly we get the message
-			String message = receiving.message;
+			String message = receiving.getMessage();
 			
 			// Check if the new message is acceptable to print immediately
 			if ( !compareVectors(receiving.vector, i) ) {
@@ -275,12 +274,26 @@ public class Chat {
 	}
     }
     
-    private class Message {
-    	public String message;
-    	public int[] vector;
+    public class Message implements Serializable {
+		
+		/**
+		 * Auto generated
+		 */
+		private static final long serialVersionUID = -1046556025942493859L;
+		private String message = null;
+    	private int[] vector = null;
+    	
     	public Message(String inMessage, int[] inVector) {
     		message = inMessage;
     		vector = Arrays.copyOf(inVector, inVector.length);
+    	}
+    	
+    	public String getMessage() {
+    		return message;
+    	}
+    	
+    	public int[] getVector() {
+    		return vector;
     	}
     	
     }
