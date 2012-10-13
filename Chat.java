@@ -3,6 +3,7 @@
 
 import java.net.*;  // ServerSocket, Socket
 import java.io.*;   // InputStream, ObjectInputStream, ObjectOutputStream
+import java.util.Arrays;
 import java.util.Vector;
 
 public class Chat {
@@ -107,6 +108,7 @@ public class Chat {
 			// of course I should not send a message to myself
 	    	System.out.println("----OUTGOING to   " + i + " " + printArray(vector));
 	    	outputs[i].writeObject(vector);	// Send message vector to others
+	    	outputs[i].flush( ); // make sure the message was sent
 			outputs[i].writeObject( message );
 			outputs[i].flush( ); // make sure the message was sent
 		    }
@@ -128,7 +130,8 @@ public class Chat {
 		    try {
 	    	
 		    // Receive the incoming message vector
-	    	int[] rec_vec = (int[]) inputs[i].readObject();
+	    	int[] rec_vec = null;
+	    	rec_vec = (int[]) inputs[i].readObject();
 	    	System.out.println("----INCOMING from " + i + " " + printArray(rec_vec));
 	    	
 	    	
@@ -149,10 +152,8 @@ public class Chat {
 				System.out.println( hosts[i] + ": " + message );
 				
 				// Update the local vector
-				updateVector(rec_vec);
+				vector = Arrays.copyOf(rec_vec, vector.length);
 			}
-			
-			
 		    } catch ( ClassNotFoundException e ) {}
 		}
 	    }
@@ -165,7 +166,7 @@ public class Chat {
     			
     			// Dequeue this vector and use it to update the local vector
     			System.out.println("++deque before" + printArray(vector));
-    			updateVector(queue_vec.remove(i));
+    			vector = Arrays.copyOf(queue_vec.remove(i), vector.length);
     			System.out.println("++deque after" + printArray(vector));
     			
     			// Dequeue from the three vectors and print out chat message
@@ -189,9 +190,7 @@ public class Chat {
      */
     private boolean compareVectors(int rec_vec[], int src) {
     	boolean acceptable = false;
-    	
-    	return true;
-    	/*
+    	return true;/*
     	// Work through the message vectors
     	for (int x = 0; x < vector.length; x++) {
     		// Looking at the source host of this message vector
@@ -207,16 +206,6 @@ public class Chat {
     		}
     	}
     	return acceptable;*/
-    }
-    
-    /**
-     * Very basic helper function that updates this clients vector with a new
-     * 
-     * @param updatedVector		The new vector numbers
-     */
-    private void updateVector(int updatedVector[]) { 	
-    	for (int x = 0; x < vector.length; x++) 
-    		vector[x] = updatedVector[x];
     }
     
  // JUNK REMOVE BEFORE TURNIN// JUNK REMOVE BEFORE TURNIN// JUNK REMOVE BEFORE TURNIN
@@ -284,5 +273,15 @@ public class Chat {
 	    e.printStackTrace( );
 	    System.exit( -1 );
 	}
+    }
+    
+    private class Message {
+    	public String message;
+    	public int[] vector;
+    	public Message(String inMessage, int[] inVector) {
+    		message = inMessage;
+    		vector = Arrays.copyOf(inVector, inVector.length);
+    	}
+    	
     }
 }
