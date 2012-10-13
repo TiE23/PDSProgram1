@@ -190,7 +190,7 @@ public class Chat {
      */
     private boolean compareVectors(int rec_vec[], int src) {
     	boolean acceptable = false;
-    	return true;/*
+    	
     	// Work through the message vectors
     	for (int x = 0; x < vector.length; x++) {
     		// Looking at the source host of this message vector
@@ -205,7 +205,7 @@ public class Chat {
     			return false;	// Flat-out not acceptable
     		}
     	}
-    	return acceptable;*/
+    	return acceptable;
     }
     
  // JUNK REMOVE BEFORE TURNIN// JUNK REMOVE BEFORE TURNIN// JUNK REMOVE BEFORE TURNIN
