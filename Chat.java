@@ -131,7 +131,7 @@ public class Chat {
 			String message = ( String )inputs[i].readObject( );
 			
 			// Check if the new message is acceptable to print immediately
-			if (compareVectors(rec_vec, i)) {
+			if (!compareVectors(rec_vec, i)) {
 				// If not, add to queue
 				queue_vec.add(rec_vec);
 				queue_msg.add(message);
@@ -162,8 +162,7 @@ public class Chat {
     			System.out.println(hosts[queue_src.remove(i).intValue()] +
     					": " + queue_msg.remove(i));
     		}
-    	}
-	    
+    	}  
 	}
     }
 
@@ -202,9 +201,7 @@ public class Chat {
     private void updateVector(int updatedVector[]) {
     	for (int x = 0; x < vector.length; x++) {
     		vector[x] = updatedVector[x];
-    	}
-    		
-    		
+    	}	
     }
     
     /**
