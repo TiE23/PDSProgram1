@@ -105,7 +105,7 @@ public class Chat {
 		for ( int i = 0; i < hosts.length; i++ )
 		    if ( i != rank ) {
 			// of course I should not send a message to myself
-		    	System.out.println("----OUTGOING to  " + i + " vec" + printArray(vector));
+	    	System.out.println("----OUTGOING to   " + i + " " + printArray(vector));
 	    	outputs[i].writeObject(vector);	// Send message vector to others
 			outputs[i].writeObject( message );
 			outputs[i].flush( ); // make sure the message was sent
@@ -131,6 +131,9 @@ public class Chat {
 	    	int[] rec_vec = (int[]) inputs[i].readObject();
 	    	System.out.println("----INCOMING from " + i + " " + printArray(rec_vec));
 	    	
+	    	
+	    	
+	    	
 		    // Secondly we get the message
 			String message = ( String )inputs[i].readObject( );
 			
@@ -143,12 +146,10 @@ public class Chat {
 				change = true;
 			} else {
 				// If it is acceptable, simply print out right away
-				///////System.out.println( hosts[i] + " - IMM: " + message );
 				System.out.println( hosts[i] + ": " + message );
+				
 				// Update the local vector
-				///////System.out.println("imm acceptable before" + printArray(vector));
 				updateVector(rec_vec);
-				///////System.out.println("imm acceptable after" + printArray(vector));
 			}
 			
 			
@@ -188,7 +189,9 @@ public class Chat {
      */
     private boolean compareVectors(int rec_vec[], int src) {
     	boolean acceptable = false;
-
+    	
+    	return true;
+    	/*
     	// Work through the message vectors
     	for (int x = 0; x < vector.length; x++) {
     		// Looking at the source host of this message vector
@@ -199,21 +202,11 @@ public class Chat {
     				System.out.println("-- acc " + src);
     			}
     		} else if (rec_vec[x] > vector[x] ){
-    			////////acceptable = false;
     			System.out.println("-- rej " + src);
     			return false;	// Flat-out not acceptable
     		}
     	}
-    	/*
-    	System.out.println("-- return: " + acceptable);
-			    	try {
-						Thread.currentThread( ).sleep( 2000 );
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-		*/
-    	return acceptable;
+    	return acceptable;*/
     }
     
     /**
@@ -221,14 +214,9 @@ public class Chat {
      * 
      * @param updatedVector		The new vector numbers
      */
-    private void updateVector(int updatedVector[]) {
-    	
-    	System.out.println("UPDATE vec" + printArray(vector) +
-    			" - rec" + printArray(updatedVector));
-    	
-    	for (int x = 0; x < vector.length; x++) {
+    private void updateVector(int updatedVector[]) { 	
+    	for (int x = 0; x < vector.length; x++) 
     		vector[x] = updatedVector[x];
-    	}	
     }
     
  // JUNK REMOVE BEFORE TURNIN// JUNK REMOVE BEFORE TURNIN// JUNK REMOVE BEFORE TURNIN
@@ -298,4 +286,3 @@ public class Chat {
 	}
     }
 }
-
