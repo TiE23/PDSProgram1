@@ -29,6 +29,8 @@ public class Chat {
      * @param hosts a list of all computing nodes that participate in chatting
      */
     public Chat( int port, int rank, String[] hosts ) throws IOException {
+	boolean change = false;
+    	
 	// print out my port, rank and local hostname
 	System.out.println( "port = " + port + ", rank = " + rank +
 			    ", localhost = " + hosts[rank] );
@@ -103,6 +105,7 @@ public class Chat {
 		for ( int i = 0; i < hosts.length; i++ )
 		    if ( i != rank ) {
 			// of course I should not send a message to myself
+		    	System.out.println("----OUTGOING to  " + i + " vec" + printArray(vector));
 	    	outputs[i].writeObject(vector);	// Send message vector to others
 			outputs[i].writeObject( message );
 			outputs[i].flush( ); // make sure the message was sent
@@ -126,22 +129,26 @@ public class Chat {
 	    	
 		    // Receive the incoming message vector
 	    	int[] rec_vec = (int[]) inputs[i].readObject();
+	    	System.out.println("----INCOMING from " + i + " " + printArray(rec_vec));
 	    	
 		    // Secondly we get the message
 			String message = ( String )inputs[i].readObject( );
 			
 			// Check if the new message is acceptable to print immediately
-			if (!compareVectors(rec_vec, i)) {
+			if ( !compareVectors(rec_vec, i) ) {
 				// If not, add to queue
 				queue_vec.add(rec_vec);
 				queue_msg.add(message);
 				queue_src.add(new Integer(i));
+				change = true;
 			} else {
 				// If it is acceptable, simply print out right away
+				///////System.out.println( hosts[i] + " - IMM: " + message );
 				System.out.println( hosts[i] + ": " + message );
-				
 				// Update the local vector
+				///////System.out.println("imm acceptable before" + printArray(vector));
 				updateVector(rec_vec);
+				///////System.out.println("imm acceptable after" + printArray(vector));
 			}
 			
 			
@@ -150,22 +157,26 @@ public class Chat {
 	    }
 	    
 	    // Go through queue hoping for a new message to dequeue
-    	for (int i = 0; i < queue_vec.size(); i++) {
-    		
+
+    	for (int i = 0; i < queue_vec.size() && change; i++) {
     		// Check if this queued message is okay to print
     		if (compareVectors(queue_vec.get(i), queue_src.get(i).intValue())){
     			
     			// Dequeue this vector and use it to update the local vector
+    			System.out.println("++deque before" + printArray(vector));
     			updateVector(queue_vec.remove(i));
+    			System.out.println("++deque after" + printArray(vector));
     			
     			// Dequeue from the three vectors and print out chat message
     			System.out.println(hosts[queue_src.remove(i).intValue()] +
     					": " + queue_msg.remove(i));
-    		}
+    		} 
+    			
     	}  
+    	change = false;
+	    
 	}
     }
-
 
     /** compareVectors()
      * 
@@ -177,19 +188,31 @@ public class Chat {
      */
     private boolean compareVectors(int rec_vec[], int src) {
     	boolean acceptable = false;
-    	
+
     	// Work through the message vectors
-    	for (int x = 0; x < rec_vec.length; x++) {
-    		
+    	for (int x = 0; x < vector.length; x++) {
     		// Looking at the source host of this message vector
     		if (x == src) {
     			// AND if the difference is 1...
-    			if (rec_vec[x] - vector[x] == 1)
+    			if (rec_vec[x] - vector[x] == 1) {
     				acceptable = true;
-    		} else if (rec_vec[x] - vector[x] != 0 ){
-    			acceptable = false;
+    				System.out.println("-- acc " + src);
+    			}
+    		} else if (rec_vec[x] > vector[x] ){
+    			////////acceptable = false;
+    			System.out.println("-- rej " + src);
+    			return false;	// Flat-out not acceptable
     		}
     	}
+    	/*
+    	System.out.println("-- return: " + acceptable);
+			    	try {
+						Thread.currentThread( ).sleep( 2000 );
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+		*/
     	return acceptable;
     }
     
@@ -199,9 +222,23 @@ public class Chat {
      * @param updatedVector		The new vector numbers
      */
     private void updateVector(int updatedVector[]) {
+    	
+    	System.out.println("UPDATE vec" + printArray(vector) +
+    			" - rec" + printArray(updatedVector));
+    	
     	for (int x = 0; x < vector.length; x++) {
     		vector[x] = updatedVector[x];
     	}	
+    }
+    
+ // JUNK REMOVE BEFORE TURNIN// JUNK REMOVE BEFORE TURNIN// JUNK REMOVE BEFORE TURNIN
+    private String printArray(int array[]) {
+    	String result = "";
+    	
+    	for (int x = 0; x < array.length; x++)
+    		result += "[" + array[x] + "] ";
+    	
+    	return result;
     }
     
     /**
