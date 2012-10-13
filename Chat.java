@@ -39,6 +39,11 @@ public class Chat {
 	inputs = new ObjectInputStream[hosts.length];
 	outputs = new ObjectOutputStream[hosts.length];
 
+	// Initialize the client array "vector"
+	vector = new int[hosts.length];
+	for (int i = 0; i < vector.length; i++)
+		vector[i] = 0;
+	
 	// establish a complete network
 	ServerSocket server = new ServerSocket( port );
 	for ( int i = hosts.length - 1; i >= 0; i-- ) {
@@ -88,14 +93,17 @@ public class Chat {
 	    if ( keyboard.ready( ) ) {
 		// since keyboard is ready, read one line.
 		String message = keyboard.readLine( );
-		if ( message == null ) {
-		    // keyboard was closed by "^d"
+		if ( message == null )
 		    break; // terminate the program
-		}
+		
+		// Increase this client's message count
+		vector[rank]++;
+		
 		// broadcast a message to each of the chat members.
 		for ( int i = 0; i < hosts.length; i++ )
 		    if ( i != rank ) {
 			// of course I should not send a message to myself
+	    	outputs[i].writeObject(vector);	// Send message vector to others
 			outputs[i].writeObject( message );
 			outputs[i].flush( ); // make sure the message was sent
 		    }
@@ -115,14 +123,77 @@ public class Chat {
 		    // read a message from chat member #i and print it out
 		    // to the monitor
 		    try {
+	    	
+		    // Receive the incoming message vector
+	    	int[] rec_vec = (int[]) inputs[i].readObject();
+	    	
+		    // Secondly we get the message
 			String message = ( String )inputs[i].readObject( );
-			System.out.println( hosts[i] + ": " + message );
+			
+			// Check if the new message is acceptable to print immediately
+			if (compareVectors(rec_vec)) {
+				// If not, add to queue
+				queue_vec.add(rec_vec);
+				queue_msg.add(message);
+				queue_src.add(new Integer(i));
+			} else {
+				// If it is acceptable, simply print out right away
+				System.out.println( hosts[i] + ": " + message );
+				
+				// Update the local vector
+				updateVector(rec_vec);
+			}
+			
+			
 		    } catch ( ClassNotFoundException e ) {}
 		}
 	    }
+	    
+	    // Go through queue hoping for a new message to dequeue
+    	for (int i = 0; i < queue_vec.size(); i++) {
+    		
+    		// Check if this queued message is okay to print
+    		if ( compareVectors(queue_vec.get(i)) ) {
+    			
+    			// Dequeue this vector and use it to update the local vector
+    			updateVector(queue_vec.remove(i));
+    			
+    			// Dequeue from the three vectors and print out chat message
+    			System.out.println(hosts[queue_src.remove(i).intValue()] +
+    					": " + queue_msg.remove(i));
+    		}
+    	}
+	    
 	}
     }
 
+
+    /** compareVectors()
+     * 
+     * Compare the current vector with the received vector to decide if it
+     * is currently acceptable to print out.
+     * 
+     * @param rec_vec
+     * @return
+     */
+    private boolean compareVectors(int rec_vec[]) {
+    	
+    	return false;
+    }
+    
+    /**
+     * Very basic helper function that updates this clients vector with a new
+     * 
+     * @param updatedVector		The new vector numbers
+     */
+    private void updateVector(int updatedVector[]) {
+    	for (int x = 0; x < vector.length; x++) {
+    		vector[x] = updatedVector[x];
+    	}
+    		
+    		
+    }
+    
     /**
      * Is the main function that verifies the correctness of its arguments and
      * starts the application.
