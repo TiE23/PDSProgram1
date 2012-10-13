@@ -274,14 +274,4 @@ public class Chat {
 	    System.exit( -1 );
 	}
     }
-    
-    private class Message {
-    	public String message;
-    	public int[] vector;
-    	public Message(String inMessage, int[] inVector) {
-    		message = inMessage;
-    		vector = Arrays.copyOf(inVector, inVector.length);
-    	}
-    	
-    }
 }
