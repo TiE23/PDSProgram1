@@ -131,7 +131,7 @@ public class Chat {
 			String message = ( String )inputs[i].readObject( );
 			
 			// Check if the new message is acceptable to print immediately
-			if (compareVectors(rec_vec)) {
+			if (compareVectors(rec_vec, i)) {
 				// If not, add to queue
 				queue_vec.add(rec_vec);
 				queue_msg.add(message);
@@ -153,7 +153,7 @@ public class Chat {
     	for (int i = 0; i < queue_vec.size(); i++) {
     		
     		// Check if this queued message is okay to print
-    		if ( compareVectors(queue_vec.get(i)) ) {
+    		if (compareVectors(queue_vec.get(i), queue_src.get(i).intValue())){
     			
     			// Dequeue this vector and use it to update the local vector
     			updateVector(queue_vec.remove(i));
@@ -176,9 +176,22 @@ public class Chat {
      * @param rec_vec
      * @return
      */
-    private boolean compareVectors(int rec_vec[]) {
+    private boolean compareVectors(int rec_vec[], int src) {
+    	boolean acceptable = false;
     	
-    	return false;
+    	// Work through the message vectors
+    	for (int x = 0; x < rec_vec.length; x++) {
+    		
+    		// Looking at the source host of this message vector
+    		if (x == src) {
+    			// AND if the difference is 1...
+    			if (rec_vec[x] - vector[x] == 1)
+    				acceptable = true;
+    		} else if (rec_vec[x] - vector[x] != 0 ){
+    			acceptable = false;
+    		}
+    	}
+    	return acceptable;
     }
     
     /**
