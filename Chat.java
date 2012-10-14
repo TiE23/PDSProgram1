@@ -3,8 +3,7 @@
 
 import java.net.*;  // ServerSocket, Socket
 import java.io.*;   // InputStream, ObjectInputStream, ObjectOutputStream
-import java.util.Arrays;
-import java.util.Vector;
+import java.util.*; // Vector and Arrays
 
 public class Chat {
     // Each element i of the following arrays represent a chat member[i]
@@ -30,7 +29,6 @@ public class Chat {
      * @param hosts a list of all computing nodes that participate in chatting
      */
     public Chat( int port, int rank, String[] hosts ) throws IOException {
-	boolean change = false;
     	
 	// print out my port, rank and local hostname
 	System.out.println( "port = " + port + ", rank = " + rank +
@@ -106,14 +104,12 @@ public class Chat {
 		for ( int i = 0; i < hosts.length; i++ )
 		    if ( i != rank ) {
 			// of course I should not send a message to myself
-	    	System.out.println("----OUTGOING to   " + i + " " + printArray(vector));
 	    	outputs[i].writeObject(vector);	// Send message vector to others
-	    	//outputs[i].flush( ); // make sure the message was sent
-	    	outputs[i].reset();
+	    	outputs[i].reset();	// Reset the stream's control over the vector
 	    	
 			outputs[i].writeObject( message );
 			outputs[i].flush( ); // make sure the message was sent
-			//outputs[i].reset();
+
 		    }
 	    }
 
@@ -134,8 +130,6 @@ public class Chat {
 	    	
 		    // Receive the incoming message vector
 	    	int[] rec_vec = (int[]) inputs[i].readObject();
-	    	System.out.println("----INCOMING from " + i + " " + printArray(rec_vec));
-	    	
 	    	
 		    // Secondly we get the message
 			String message = ( String )inputs[i].readObject( );
@@ -146,12 +140,6 @@ public class Chat {
 				queue_vec.add(rec_vec);
 				queue_msg.add(message);
 				queue_src.add(new Integer(i));
-				change = true;
-				
-				/////////////////
-				System.out.println("------REJECTED from " 
-						+ hosts[i] +
-                      ": " + message);
 				
 			} else {
 				// If it is acceptable, simply print out right away
@@ -166,23 +154,18 @@ public class Chat {
 	    
 	    // Go through queue hoping for a new message to dequeue
 
-    	for (int i = 0; i < queue_vec.size() && change; i++) {
+    	for (int i = 0; i < queue_vec.size(); i++) {
     		// Check if this queued message is okay to print
     		if (compareVectors(queue_vec.get(i), queue_src.get(i).intValue())){
     			
     			// Dequeue this vector and use it to update the local vector
-    			System.out.println("++deque before" + printArray(vector));
     			vector = Arrays.copyOf(queue_vec.remove(i), vector.length);
-    			System.out.println("++deque after" + printArray(vector));
     			
     			// Dequeue from the three vectors and print out chat message
     			System.out.println(hosts[queue_src.remove(i).intValue()] +
     					": " + queue_msg.remove(i));
-    		} 
-    			
+    		} 	
     	}  
-    	change = false;
-	    
 	}
     }
 
@@ -198,30 +181,13 @@ public class Chat {
     	boolean acceptable = false;
     	
     	// Work through the message vectors
-    	for (int x = 0; x < vector.length; x++) {
-    		// Looking at the source host of this message vector
-    		if (x == src) {
-    			// AND if the difference is 1...
-    			if (rec_vec[x] - vector[x] == 1) {
+    	for (int x = 0; x < vector.length; x++) 
+    		if (x == src) // Looking at the source host of this message vector
+    			if (rec_vec[x] - vector[x] == 1) // AND if the difference is 1
     				acceptable = true;
-    				System.out.println("-- acc " + src);
-    			}
-    		} else if (rec_vec[x] > vector[x] ){
-    			System.out.println("-- rej " + src);
-    			return false;	// Flat-out not acceptable
-    		}
-    	}
+    		else if (rec_vec[x] > vector[x] )
+    			return false;	// Flat-out unacceptable
     	return acceptable;
-    }
-    
- // JUNK REMOVE BEFORE TURNIN// JUNK REMOVE BEFORE TURNIN// JUNK REMOVE BEFORE TURNIN
-    private String printArray(int array[]) {
-    	String result = "";
-    	
-    	for (int x = 0; x < array.length; x++)
-    		result += "[" + array[x] + "] ";
-    	
-    	return result;
     }
     
     /**
@@ -272,7 +238,7 @@ public class Chat {
 		rank = i;
 	}
 
-	// now start the Chat application
+	// now start the Chat application 
 	try {
 	    new Chat( port, rank, hosts );
 	} catch ( IOException e ) {
