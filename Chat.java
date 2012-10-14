@@ -108,9 +108,12 @@ public class Chat {
 			// of course I should not send a message to myself
 	    	System.out.println("----OUTGOING to   " + i + " " + printArray(vector));
 	    	outputs[i].writeObject(vector);	// Send message vector to others
-	    	outputs[i].flush( ); // make sure the message was sent
+	    	//outputs[i].flush( ); // make sure the message was sent
+	    	outputs[i].reset();
+	    	
 			outputs[i].writeObject( message );
 			outputs[i].flush( ); // make sure the message was sent
+			//outputs[i].reset();
 		    }
 	    }
 
@@ -130,11 +133,8 @@ public class Chat {
 		    try {
 	    	
 		    // Receive the incoming message vector
-	    	int[] rec_vec = null;
-	    	rec_vec = (int[]) inputs[i].readObject();
+	    	int[] rec_vec = (int[]) inputs[i].readObject();
 	    	System.out.println("----INCOMING from " + i + " " + printArray(rec_vec));
-	    	
-	    	
 	    	
 	    	
 		    // Secondly we get the message
@@ -147,6 +147,12 @@ public class Chat {
 				queue_msg.add(message);
 				queue_src.add(new Integer(i));
 				change = true;
+				
+				/////////////////
+				System.out.println("------REJECTED from " 
+						+ hosts[i] +
+                      ": " + message);
+				
 			} else {
 				// If it is acceptable, simply print out right away
 				System.out.println( hosts[i] + ": " + message );
