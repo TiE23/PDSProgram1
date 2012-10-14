@@ -109,7 +109,6 @@ public class Chat {
 	    	
 			outputs[i].writeObject( message );
 			outputs[i].flush( ); // make sure the message was sent
-
 		    }
 	    }
 
@@ -164,6 +163,10 @@ public class Chat {
     			// Dequeue from the three vectors and print out chat message
     			System.out.println(hosts[queue_src.remove(i).intValue()] +
     					": " + queue_msg.remove(i));
+    			
+    			// Restart the loop from the start so that we may print multiple 
+    			// dequeues at once.
+    			i = 0; 
     		} 	
     	}  
 	}
