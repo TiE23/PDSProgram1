@@ -145,7 +145,7 @@ public class Chat {
 				System.out.println( hosts[i] + ": " + message );
 				
 				// Update the local vector
-				vector = Arrays.copyOf(rec_vec, vector.length);
+				updateVector(rank, rec_vec);
 			}
 		    } catch ( ClassNotFoundException e ) {}
 		}
@@ -158,7 +158,7 @@ public class Chat {
     		if (compareVectors(queue_vec.get(i), queue_src.get(i).intValue())){
     			
     			// Dequeue this vector and use it to update the local vector
-    			vector = Arrays.copyOf(queue_vec.remove(i), vector.length);
+    			updateVector(rank, queue_vec.remove(i));
     			
     			// Dequeue from the three vectors and print out chat message
     			System.out.println(hosts[queue_src.remove(i).intValue()] +
@@ -192,6 +192,23 @@ public class Chat {
     			return false;	// Flat-out unacceptable
     	return acceptable;
     }
+    
+    /** updateVector()
+     * 
+     * Safely updates this client's vector while maintaining its own message
+     * count value to prevent cases where it could get over-written with a
+     * lower value than it is in reality, which would cause other clients
+     * to reject all further messages from the client that fell behind.
+     * 
+     * @param rank		This client's rank
+     * @param invector	The new vector to update from
+     */
+    private void updateVector(int rank, int rec_vec[]) {
+    	int current = vector[rank];
+    	vector = Arrays.copyOf(rec_vec, vector.length);
+    	vector[rank] = current;
+    }
+    
     
     /**
      * Is the main function that verifies the correctness of its arguments and
