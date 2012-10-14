@@ -173,6 +173,7 @@ public class Chat {
 	}
     }
 
+    
     /** compareVectors()
      * 
      * Compare the current vector with the received vector to decide if it
@@ -186,13 +187,33 @@ public class Chat {
     	
     	// Work through the message vectors
     	for (int x = 0; x < vector.length; x++) 
-    		if (x == src) // Looking at the source host of this message vector
-    			if (rec_vec[x] - vector[x] == 1) // AND if the difference is 1
+    		if (x == src) { // Looking at the source host of this message vector
+    			if (rec_vec[x] - vector[x] == 1) { // AND if the difference is 1
     				acceptable = true;
-    		else if (rec_vec[x] > vector[x] )
+    			}
+			// Looking at another vector
+    		} else if (rec_vec[x] > vector[x] ) {
     			return false;	// Flat-out unacceptable
+    		}
     	return acceptable;
     }
+    
+    
+    /** printArray
+     * A basic array printing function. Strictly for testing purposes.
+     * 
+     * @param array
+     * @return
+     */
+    private String printArray(int array[]) {
+    	String result = "";
+    	
+    	for (int x = 0; x < array.length; x++)
+    		result += "[" + array[x] + "] ";
+    	
+    	return result;
+    }
+    
     
     /**
      * Is the main function that verifies the correctness of its arguments and
@@ -250,4 +271,5 @@ public class Chat {
 	    System.exit( -1 );
 	}
     }
+
 }
