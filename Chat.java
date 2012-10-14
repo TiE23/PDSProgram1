@@ -152,7 +152,6 @@ public class Chat {
 	    }
 	    
 	    // Go through queue hoping for a new message to dequeue
-
     	for (int i = 0; i < queue_vec.size(); i++) {
     		// Check if this queued message is okay to print
     		int src = queue_src.get(i).intValue();
@@ -162,6 +161,7 @@ public class Chat {
     			vector[src]++;
     			
     			// Dequeue from the three vectors and print out chat message
+    			queue_vec.remove(i);
     			System.out.println(hosts[queue_src.remove(i).intValue()] +
     					": " + queue_msg.remove(i));
     			
